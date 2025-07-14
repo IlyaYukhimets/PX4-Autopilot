@@ -322,13 +322,14 @@
 // Timing from data sheet Total bit time is 1200 nS
 // one is ----____, (600/600) a zero is ---_____ (300/900)
 
-#define T0H              ((300ll  * S_RGB_LED_CLOCK) / DIVISOR)
-#define T1H              ((600ll  * S_RGB_LED_CLOCK) / DIVISOR)
+#define T0H              ((350ll  * S_RGB_LED_CLOCK) / DIVISOR)
+#define T1H              ((700ll  * S_RGB_LED_CLOCK) / DIVISOR)
 #define TW               ((1200ll * S_RGB_LED_CLOCK) / DIVISOR)
 
 #define COLOR_PER_LED   3  // There is a R G B in each package.
 #define BITS_PER_COLOR  8  // Each LED has 8 bits of luminosity
 #define BITS_PER_PACKAGE (BITS_PER_COLOR * COLOR_PER_LED)
+#define BITS_PER_LINE (BITS_PER_PACKAGE * BOARD_HAS_N_S_RGB_LED)
 
 
 // The DMA handle used by the driver.
@@ -349,7 +350,7 @@ void dma_callback(DMA_HANDLE handle, uint8_t status, void *arg)
  *  [hi][lo]:{8 * 3 * 8} [ffff] Last DMA will set the output low
  *  Output =  ctr < ccr ? 1 : 0;
 */
-uint16_t bits[(BITS_PER_COLOR * COLOR_PER_LED * BOARD_HAS_N_S_RGB_LED) + 1] __attribute__((aligned(sizeof(uint16_t))));
+uint16_t bits[(BITS_PER_COLOR * COLOR_PER_LED * BOARD_HAS_N_S_RGB_LED)/* + 1*/] __attribute__((aligned(sizeof(uint16_t))));
 
 extern int neopixel_write(neopixel::NeoLEDData *led_data, int number_of_packages)
 {
@@ -363,8 +364,10 @@ extern int neopixel_write(neopixel::NeoLEDData *led_data, int number_of_packages
 
 	// For the bits times to DMA
 
-	for (uint32_t i = 0, leds = 0; i < arraySize(bits) - 1; i++) {
-		mask = 1 << ((BITS_PER_PACKAGE - 1) - (i % BITS_PER_PACKAGE));
+	for (uint32_t i = 0, leds = 0; i < BITS_PER_LINE - 1; i++)
+	{
+		mask = 1 << (BITS_PER_PACKAGE - 2 - i);// - (i % BITS_PER_PACKAGE));
+
 		bits[i] = led_data[leds].data.l & mask ? T1H : T0H;
 
 		if (mask & 1) {

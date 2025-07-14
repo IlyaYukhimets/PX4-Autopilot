@@ -291,7 +291,7 @@ __BEGIN_DECLS
 #  define S_RGB_LED_TIMER                17   /* timer 17    */
 #  define S_RGB_LED_CHANNEL              1   /* channel 1  */
 //#  define S_RGB_LED_CHANNELN             1   /* channel 1N */
-#  define S_RGB_LED_TIM_GPIO             GPIO_TIM17_CH1OUT_1
+#  define S_RGB_LED_TIM_GPIO              (GPIO_ALT|GPIO_AF1|GPIO_SPEED_50MHz|GPIO_PUSHPULL|GPIO_PORTB|GPIO_PIN9)
 #endif
 
 

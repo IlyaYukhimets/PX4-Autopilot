@@ -208,6 +208,7 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 
 	/* Power on Interfaces */
 	//VDD_3V3_SD_CARD_EN(true);
+
 	VDD_5V_PERIPH_EN(true);
 	VDD_5V_RADIO_EN(true);
 	//GPIO_D10_EN(true);
@@ -257,9 +258,9 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 	 * from IP block Leave TX connected
 	 */
 
-	// if (!PX4_MFT_HW_SUPPORTED(PX4_MFT_CAN2)) {
-	// 	px4_arch_configgpio(_GPIO_PULL_DOWN_INPUT(GPIO_CAN2_RX));
-	// }
+	if (!PX4_MFT_HW_SUPPORTED(PX4_MFT_CAN2)) {
+		px4_arch_configgpio(_GPIO_PULL_DOWN_INPUT(GPIO_CAN2_RX));
+	}
 
 	// if (!PX4_MFT_HW_SUPPORTED(PX4_MFT_CAN3)) {
 	// 	px4_arch_configgpio(_GPIO_PULL_DOWN_INPUT(GPIO_CAN3_RX));

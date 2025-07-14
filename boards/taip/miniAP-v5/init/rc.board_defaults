@@ -3,7 +3,6 @@
 # board specific defaults
 #------------------------------------------------------------------------------
 
-#rgbled_pwm start
-#safety_button start
+neopixel start
 atxxxx start -s
 vtx_control start

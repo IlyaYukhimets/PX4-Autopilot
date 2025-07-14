@@ -62,9 +62,9 @@ static const px4_hw_mft_item_t hw_mft_list_v0511[] = {
 	},
 	{
 		// PX4_MFT_CAN2
-		.present     = 0,
-		.mandatory   = 0,
-		.connection  = px4_hw_con_unknown,
+		.present     = 1,
+		.mandatory   = 1,
+		.connection  = px4_hw_con_onboard,
 	},
 	{
 		// PX4_MFT_CAN3
@@ -99,7 +99,7 @@ __EXPORT px4_hw_mft_item board_query_manifest(px4_hw_mft_item_id_t id)
 	static px4_hw_mft_list_entry boards_manifest = px4_hw_mft_list_uninitialized;
 
 	if (boards_manifest == px4_hw_mft_list_uninitialized) {
-		uint32_t ver_rev = board_get_hw_version() << 8;
+		uint32_t ver_rev = board_get_hw_version() << 16;
 		ver_rev |= board_get_hw_revision();
 
 		for (unsigned i = 0; i < arraySize(mft_lists); i++) {

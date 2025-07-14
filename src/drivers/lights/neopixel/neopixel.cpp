@@ -237,6 +237,8 @@ void NEOPIXEL::Run()
             break;
         }
 	    }
+
+	   //  _leds[0].R() = 0; _leds[0].G() = 255; _leds[0].B() = 0;
       neopixel_write(_leds, _number_of_packages);
 	}
 
