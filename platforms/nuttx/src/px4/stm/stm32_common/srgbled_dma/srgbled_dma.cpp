@@ -239,7 +239,7 @@
 #endif
 
 #if S_RGB_LED_CHANNEL == 1
-# define SLED_CCER      (CCER_CCnxE << 0) |
+# define SLED_CCER      (CCER_CCnxE << 0)
 # define SLED_CCMR1     GTIM_CCMR1_OC1PE | (GTIM_CCMR_MODE_PWM1 << GTIM_CCMR1_OC1M_SHIFT)
 # define SLED_CCMR2     0
 # define SLED_rCCR      rCCR1
@@ -374,11 +374,14 @@ extern int neopixel_write(neopixel::NeoLEDData *led_data, int number_of_packages
 
 	// Set up the DMA Operations
 
-	stm32_dmasetup(dma_handle,
-		       _TIM_REG(STM32_GTIM_DMAR_OFFSET),
-		       (uint32_t) bits,
-		       arraySize(bits),
-		       SLED_DMA_SCR);
+	struct stm32_dma_config_s cfg;
+	cfg.paddr = _TIM_REG(STM32_GTIM_DMAR_OFFSET);
+	cfg.maddr = (uint32_t) bits;
+	cfg.cfg1 = SLED_DMA_SCR;
+	cfg.cfg2 = 0;
+	cfg.ndata = arraySize(bits);
+
+	stm32_dmasetup(dma_handle, &cfg);
 
 	// atomic operations
 	irqstate_t flags = px4_enter_critical_section();

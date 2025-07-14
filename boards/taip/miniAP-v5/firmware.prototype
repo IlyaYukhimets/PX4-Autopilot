@@ -1,0 +1,13 @@
+{
+    "board_id": 214,
+    "magic": "TAIP_MINIAP_V5",
+    "description": "Firmware for the TAIP_MINIAP_V5 board",
+    "image": "",
+    "build_time": 0,
+    "summary": "TAIPMINIAPV5",
+    "version": "0.1",
+    "image_size": 0,
+    "image_maxsize": 2064384,
+    "git_identity": "",
+    "board_revision": 0
+}
