@@ -315,7 +315,7 @@
 
 // The DMA control word
 
-#define SLED_DMA_SCR (DMA_SCR_PRIHI | DMA_SCR_MSIZE_16BITS | DMA_SCR_PSIZE_16BITS | DMA_SCR_MINC | \
+#define SLED_DMA_SCR (DMA_SCR_PRILO | DMA_SCR_MSIZE_16BITS | DMA_SCR_PSIZE_16BITS | DMA_SCR_MINC | \
 		      DMA_SCR_DIR_M2P | DMA_SCR_TCIE | DMA_SCR_TEIE | DMA_SCR_DMEIE)
 
 #define DIVISOR          1000000000ll // working in nS
@@ -350,11 +350,12 @@ void dma_callback(DMA_HANDLE handle, uint8_t status, void *arg)
  *  [hi][lo]:{8 * 3 * 8} [ffff] Last DMA will set the output low
  *  Output =  ctr < ccr ? 1 : 0;
 */
-uint16_t bits[(BITS_PER_COLOR * COLOR_PER_LED * BOARD_HAS_N_S_RGB_LED)/* + 1*/] __attribute__((aligned(sizeof(uint16_t))));
+uint16_t bits[(BITS_PER_LINE) + 1] __attribute__((aligned(sizeof(uint16_t))));
 
 extern int neopixel_write(neopixel::NeoLEDData *led_data, int number_of_packages)
 {
 	uint32_t mask;
+	uint32_t i = 0, leds = 0;
 
 	// DMA in progress let it finish
 
@@ -364,9 +365,9 @@ extern int neopixel_write(neopixel::NeoLEDData *led_data, int number_of_packages
 
 	// For the bits times to DMA
 
-	for (uint32_t i = 0, leds = 0; i < BITS_PER_LINE - 1; i++)
+	for (i = 0, leds = 0; i < BITS_PER_LINE; i++)
 	{
-		mask = 1 << (BITS_PER_PACKAGE - 2 - i);// - (i % BITS_PER_PACKAGE));
+		mask = 1 << (BITS_PER_PACKAGE - 1 - i);
 
 		bits[i] = led_data[leds].data.l & mask ? T1H : T0H;
 
@@ -375,27 +376,39 @@ extern int neopixel_write(neopixel::NeoLEDData *led_data, int number_of_packages
 		}
 	}
 
-	// Set up the DMA Operations
+	bits[leds * i + 1] = 0;
+	leds = 0;
+	i = 0;
 
+	// Set up the DMA Operations
+#if defined(CONFIG_STM32H7_DMA1) || defined(CONFIG_STM32H7_DMA2)
 	struct stm32_dma_config_s cfg;
-	cfg.paddr = _TIM_REG(STM32_GTIM_DMAR_OFFSET);
-	cfg.maddr = (uint32_t) bits;
+	cfg.paddr = STM32_TIM17_DMAR;
+	cfg.maddr = (uint32_t) &bits[1];
 	cfg.cfg1 = SLED_DMA_SCR;
 	cfg.cfg2 = 0;
-	cfg.ndata = arraySize(bits);
+	cfg.ndata = BITS_PER_LINE; //We have buffer of 25 color data (bits), first word we preload before start DMA. Bits[25] has a null value for dummy send by DMA.
 
 	stm32_dmasetup(dma_handle, &cfg);
+#else
+		stm32_dmasetup(dma_handle,
+		       _TIM_REG(STM32_GTIM_DMAR_OFFSET),
+		       (uint32_t) bits,
+		       arraySize(bits),
+		       SLED_DMA_SCR);
+#endif
 
 	// atomic operations
 	irqstate_t flags = px4_enter_critical_section();
 
 	// Prep the timer for update, start with the first bit.
 	SLED_rCCR = bits[0];
-	rEGR |= GTIM_EGR_UG;
+	//rEGR |= GTIM_EGR_UG;
 	rCR1 |= GTIM_CR1_CEN;  // Start the Timer
 
 	// And away we go
 	stm32_dmastart(dma_handle, dma_callback, NULL, false);
+
 	px4_leave_critical_section(flags);
 
 	return 0;
