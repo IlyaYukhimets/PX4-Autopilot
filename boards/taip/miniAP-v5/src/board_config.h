@@ -138,6 +138,8 @@
 
 /* Power supply control and monitoring GPIOs */
 
+#define GPIO_BUF_EN /* PA2 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTE|GPIO_PIN3) 	//OK
+
 #define GPIO_VDD_5V_RADIO_EN          	/* PA2 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN2) 	//OK
 #define GPIO_VDD_5V_PERIPH_EN          	/* PA10 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN10) 	//OK
 #define GPIO_CAMERA_EN_PIN          	/* PD7 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTD|GPIO_PIN7) 	//OK
@@ -147,6 +149,7 @@
 
 
 /* Define True logic Power Control in arch agnostic form */
+#define PWM_BUF_EN(on_true)           px4_arch_gpiowrite(GPIO_BUF_EN, (on_true)) 	//OK
 
 #define VDD_5V_RADIO_EN(on_true)           px4_arch_gpiowrite(GPIO_VDD_5V_RADIO_EN, (on_true)) 	//OK
 #define VDD_5V_PERIPH_EN(on_true)          px4_arch_gpiowrite(GPIO_VDD_5V_PERIPH_EN, (on_true)) //OK
@@ -262,7 +265,8 @@
 		GPIO_PWM_CH1,     	          \
 		GPIO_PWM_CH2,     	          \
 		GPIO_PWM_CH3,     	          \
-		GPIO_PWM_CH5     	          \
+		GPIO_PWM_CH5,     	          \
+		GPIO_BUF_EN     	          \
 	}
 
 #define BOARD_ENABLE_CONSOLE_BUFFER 	//OK

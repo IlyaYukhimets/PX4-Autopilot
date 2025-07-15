@@ -214,6 +214,8 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 	//GPIO_D10_EN(true);
 	//VDD_3V3_SENSORS_EN(true);
 	up_mdelay(10);
+
+	PWM_BUF_EN(true);
 	//board_control_spi_sensors_power(true, 0xffff);
 
 	/* Need hrt running before using the ADC */

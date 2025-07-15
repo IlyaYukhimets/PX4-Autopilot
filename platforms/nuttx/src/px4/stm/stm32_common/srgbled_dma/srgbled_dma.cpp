@@ -405,9 +405,12 @@ extern int neopixel_write(neopixel::NeoLEDData *led_data, int number_of_packages
 	SLED_rCCR = bits[0];
 	//rEGR |= GTIM_EGR_UG;
 	rCR1 |= GTIM_CR1_CEN;  // Start the Timer
+	rDIER &= ~GTIM_DIER_UDE;
 
 	// And away we go
 	stm32_dmastart(dma_handle, dma_callback, NULL, false);
+
+	rDIER |= GTIM_DIER_UDE;
 
 	px4_leave_critical_section(flags);
 
