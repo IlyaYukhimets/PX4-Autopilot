@@ -1,0 +1,6 @@
+menuconfig MODULES_VTX_CONTROL
+	bool "vtx_control"
+	default n
+	---help---
+		Enable support for vtx_control
+

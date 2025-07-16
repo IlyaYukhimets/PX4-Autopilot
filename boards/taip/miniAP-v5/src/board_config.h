@@ -71,10 +71,18 @@
 
 /* Define Channel numbers must match above GPIO pin IN(n)*/
 
+#define ADC_V5_SCALE 		(2.0f) // The scale factor defined by HW's resistive divider (Rt+Rb)/ Rb
+#define ADC_3V3_SCALE		(2.0f) // The scale factor defined by HW's resistive divider (Rt+Rb)/ Rb
+#define BOARD_BATTERY1_V_DIV	(12.0f) // The scale factor defined by HW's resistive divider (Rt+Rb)/ Rb
+#define BOARD_BATTERY1_A_PER_V	(40.0f) // The scale factor defined by HW's resistive divider (Rt+Rb)/ Rb
+
+#define BOARD_NUMBER_BRICKS 1
+#define BOARD_ADC_BRICK_VALID 1
+
 #define ADC_HW_VER_SENSE_CHANNEL        	/* PB0 */  ADC1_CH(9) //OK
 #define ADC_HW_REV_SENSE_CHANNEL        	/* PB1 */  ADC1_CH(5) //OK
 #define ADC_SCALED_V5_CHANNEL        		/* PC2 */  ADC3_CH(12) //OK
-#define ADC_SCALED_VDD_3V3_MAIN_CHANNEL        	/* PC1 */  ADC1_CH(11) //OK
+#define ADC_SCALED_VDD_3V3_SENSORS_CHANNEL        	/* PC1 */  ADC1_CH(11) //OK
 //#define ADC_SCALED_VDD_3V3_SENSORS_CHANNEL      /* PC3 */  ADC3_CH(13) NOT USED
 #define ADC_RSSI_CHANNEL                 	/* PA3 */  ADC1_CH(15) //OK
 #define ADC_BATTERY_VOLTAGE_CHANNEL             /* PC0 */  ADC1_CH(10) //OK
@@ -85,7 +93,7 @@
 	((1 << ADC_HW_VER_SENSE_CHANNEL)       		| \
 	 (1 << ADC_HW_REV_SENSE_CHANNEL)       		| \
 	 (1 << ADC_SCALED_V5_CHANNEL)       		| \
-	 (1 << ADC_SCALED_VDD_3V3_MAIN_CHANNEL)       	| \
+	 (1 << ADC_SCALED_VDD_3V3_SENSORS_CHANNEL)       	| \
 	 (1 << ADC_RSSI_CHANNEL)      | \
 	 (1 << ADC_BATTERY_VOLTAGE_CHANNEL)      | \
 	 (1 << ADC_BATTERY_CURRENT_CHANNEL))
@@ -230,9 +238,9 @@
 #define BOARD_ADC_USB_CONNECTED (px4_arch_gpioread(GPIO_OTGFS_VBUS)) //OK
 
 #define BOARD_ADC_USB_VALID     BOARD_ADC_USB_CONNECTED //OK
-
+#define BOARD_ADC_BRICK1_VALID  1
 #define BOARD_ADC_PERIPH_5V_OC  (!px4_arch_gpioread(GPIO_nVDD_5V_PERIPH_OC)) //OK
-#define BOARD_ADC_RADIO_5V_OC (!px4_arch_gpioread(GPIO_nVDD_5V_RADIO_OC)) //OK
+#define BOARD_ADC_HIPOWER_5V_OC (!px4_arch_gpioread(GPIO_nVDD_5V_RADIO_OC)) //OK
 
 
 /* This board provides a DMA pool and APIs */
