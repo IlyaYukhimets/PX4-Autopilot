@@ -146,6 +146,10 @@ public:
 	const Vector3f &getRefBodyRate() const { return _ref_body_rate; }
 #endif // CONFIG_EKF2_OPTICAL_FLOW
 
+	float getVisualPitch() const { return _visual_pitch_roll_delayed.pitch; }
+	float getVisualRoll() const { return _visual_pitch_roll_delayed.roll; }
+	const auto &aid_src_visual_pitch_roll() const { return _aid_src_visual_pitch_roll; }
+
 	float getHeadingInnov() const
 	{
 #if defined(CONFIG_EKF2_MAGNETOMETER)
@@ -612,6 +616,8 @@ private:
 	HeightBiasEstimator _rng_hgt_b_est{HeightSensor::RANGE, _height_sensor_ref};
 #endif // CONFIG_EKF2_RANGE_FINDER
 
+	estimator_aid_source2d_s _aid_src_visual_pitch_roll{};
+
 #if defined(CONFIG_EKF2_OPTICAL_FLOW)
 	estimator_aid_source2d_s _aid_src_optical_flow{};
 
@@ -895,6 +901,11 @@ private:
 	float predictFlowRange();
 	Vector2f predictFlowVelBody();
 #endif // CONFIG_EKF2_OPTICAL_FLOW
+
+	// visual pitch roll
+	void fuseVisualPitchRoll(const visualPitchRoll & pitch_roll, estimator_aid_source2d_s & aid_src);
+
+	void controlVisualPitchRollFusion(const imuSample &imu_delayed);
 
 #if defined(CONFIG_EKF2_MAGNETOMETER)
 	// Return the magnetic declination in radians to be used by the alignment and fusion processing

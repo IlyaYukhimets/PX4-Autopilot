@@ -118,6 +118,8 @@ public:
 	const rangeSample &get_rng_sample_delayed() { return *(_range_sensor.getSampleAddress()); }
 #endif // CONFIG_EKF2_RANGE_FINDER
 
+	void setVisualPitchRoll(const visualPitchRoll& pitch_roll);
+
 #if defined(CONFIG_EKF2_OPTICAL_FLOW)
 	// if optical flow sensor gyro delta angles are not available, set gyro_rate vector fields to NaN and the EKF will use its internal gyro data instead
 	void setOpticalFlowData(const flowSample &flow);
@@ -350,6 +352,9 @@ protected:
 #if defined(CONFIG_EKF2_AIRSPEED)
 	airspeedSample _airspeed_sample_delayed{};
 #endif // CONFIG_EKF2_AIRSPEED
+
+	RingBuffer<visualPitchRoll> 	*_visual_pitch_roll_buffer{nullptr};
+	visualPitchRoll _visual_pitch_roll_delayed{};
 
 #if defined(CONFIG_EKF2_EXTERNAL_VISION)
 	extVisionSample _ev_sample_prev{};
