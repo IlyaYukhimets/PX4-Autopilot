@@ -507,6 +507,8 @@ public:
 
 	void resetGlobalPosToExternalObservation(double lat_deg, double lon_deg, float accuracy, uint64_t timestamp_observation);
 
+	void resetVerticalPositionTo(float new_vert_pos, float new_vert_pos_var = NAN);
+
 	void updateParameters();
 
 	friend class AuxGlobalPosition;
@@ -814,8 +816,6 @@ private:
 	void resetHorizontalPositionTo(const Vector2f &new_horz_pos, const float pos_var = NAN) { resetHorizontalPositionTo(new_horz_pos, Vector2f(pos_var, pos_var)); }
 
 	bool isHeightResetRequired() const;
-
-	void resetVerticalPositionTo(float new_vert_pos, float new_vert_pos_var = NAN);
 
 	void resetVerticalVelocityToZero();
 

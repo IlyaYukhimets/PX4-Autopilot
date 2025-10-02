@@ -475,6 +475,9 @@ void EKF2::Run()
 					PX4_INFO("%d - New NED origin (LLA): %3.10f, %3.10f, %4.3f\n",
 						 _instance, latitude, longitude, static_cast<double>(altitude));
 
+					if (!_ekf.control_status_flags().in_air)
+						_ekf.resetVerticalPositionTo(0.f);
+
 				} else {
 					PX4_ERR("%d - Failed to set new NED origin (LLA): %3.10f, %3.10f, %4.3f\n",
 						_instance, latitude, longitude, static_cast<double>(altitude));
@@ -498,6 +501,11 @@ void EKF2::Run()
 					// TODO add check for lat and long validity
 					_ekf.resetGlobalPosToExternalObservation(vehicle_command.param5, vehicle_command.param6,
 							accuracy, timestamp_observation);
+
+					if (PX4_ISFINITE(vehicle_command.param7))
+					{
+						_ekf.resetVerticalPositionTo(0.f);
+					}
 				}
 			}
 		}
