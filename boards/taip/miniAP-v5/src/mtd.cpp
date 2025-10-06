@@ -50,12 +50,12 @@ static const px4_mtd_entry_t fmum_fram = {
 		{
 			.type = MTD_PARAMETERS,
 			.path = "/fs/mtd_params",
-			.nblocks = (16384 / (1 << CONFIG_RAMTRON_EMULATE_SECTOR_SHIFT)) / 2
+			.nblocks = (16384 / (1 << CONFIG_RAMTRON_EMULATE_SECTOR_SHIFT))// / 2
 		},
 		{
 			.type = MTD_WAYPOINTS,
 			.path = "/fs/mtd_waypoints",
-			.nblocks = (16384 / (1 << CONFIG_RAMTRON_EMULATE_SECTOR_SHIFT)) / 2
+			.nblocks = (16384 / (1 << CONFIG_RAMTRON_EMULATE_SECTOR_SHIFT))// / 2
 
 		}
 
