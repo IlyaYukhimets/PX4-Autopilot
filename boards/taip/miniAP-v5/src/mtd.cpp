@@ -45,13 +45,20 @@ static const px4_mft_device_t i2c3 = {             // 24LC64T on Base  8K 32 X 2
 
 static const px4_mtd_entry_t fmum_fram = {
 	.device = &spi2,
-	.npart = 1,
+	.npart = 2,
 	.partd = {
 		{
 			.type = MTD_PARAMETERS,
 			.path = "/fs/mtd_params",
-			.nblocks = (16384 / (1 << CONFIG_RAMTRON_EMULATE_SECTOR_SHIFT))
+			.nblocks = (16384 / (1 << CONFIG_RAMTRON_EMULATE_SECTOR_SHIFT)) / 2
+		},
+		{
+			.type = MTD_WAYPOINTS,
+			.path = "/fs/mtd_waypoints",
+			.nblocks = (16384 / (1 << CONFIG_RAMTRON_EMULATE_SECTOR_SHIFT)) / 2
+
 		}
+
 	},
 };
 

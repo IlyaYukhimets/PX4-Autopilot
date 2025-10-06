@@ -14,6 +14,7 @@ bmi088 -G -R 0 -s start
 
 # internal compass
 ist8308 -I -b 2 -a 12 -R 8 start
+mmc5983ma -I -b 2 -R 8 start
 
 # External compass on GPS1/I2C1 (the 1rd external bus): standard Holybro Pixhawk 4 or CUAV V5 GPS/compass puck (with lights, safety button, and buzzer)
 ist8310 -X -R 10 start
