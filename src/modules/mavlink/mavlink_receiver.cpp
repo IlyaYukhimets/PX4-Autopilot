@@ -656,6 +656,10 @@ void MavlinkReceiver::handle_message_command_both(mavlink_message_t *msg, const 
 		}
 
 		send_ack = true;
+	}
+	else if (cmd_mavlink.command == 21321) {
+		send_ack = false;
+		handle_message_visual_pitch_roll(msg);
 
 	} else {
 		send_ack = false;
@@ -3025,6 +3029,22 @@ MavlinkReceiver::handle_message_gimbal_device_attitude_status(mavlink_message_t 
 	gimbal_attitude_status.received_from_mavlink = true;
 
 	_gimbal_device_attitude_status_pub.publish(gimbal_attitude_status);
+}
+
+void MavlinkReceiver::handle_message_visual_pitch_roll(mavlink_message_t *msg)
+{
+//	mavlink_log_info(&_mavlink_log_pub, "handle_message_visual_pitch_roll\n");
+	mavlink_command_long_t cmd_mavlink;
+	mavlink_msg_command_long_decode(msg, &cmd_mavlink);
+
+	visual_pitch_roll_s visual_pitch_roll{};
+
+	visual_pitch_roll.timestamp = hrt_absolute_time();
+	visual_pitch_roll.visual_pitch = cmd_mavlink.param1;
+	visual_pitch_roll.visual_roll = cmd_mavlink.param2;
+	visual_pitch_roll.confidence = cmd_mavlink.param3;
+
+	_visual_pitch_roll_pub.publish(visual_pitch_roll);
 }
 
 void

@@ -73,6 +73,7 @@ EstimatorInterface::~EstimatorInterface()
 #if defined(CONFIG_EKF2_AUXVEL)
 	delete _auxvel_buffer;
 #endif // CONFIG_EKF2_AUXVEL
+	delete _visual_pitch_roll_buffer;
 }
 
 // Accumulate imu data and store to buffer at desired rate
@@ -339,6 +340,41 @@ void EstimatorInterface::setOpticalFlowData(const flowSample &flow)
 	}
 }
 #endif // CONFIG_EKF2_OPTICAL_FLOW
+
+void EstimatorInterface::setVisualPitchRoll(const visualPitchRoll& pitch_roll)
+{
+	if (!_initialised) {
+		return;
+	}
+
+	// Allocate the required buffer size if not previously done
+	if (_visual_pitch_roll_buffer == nullptr) {
+		_visual_pitch_roll_buffer = new RingBuffer<visualPitchRoll>(_imu_buffer_length);
+
+		if (_visual_pitch_roll_buffer == nullptr || !_visual_pitch_roll_buffer->valid()) {
+			delete _visual_pitch_roll_buffer;
+			_visual_pitch_roll_buffer = nullptr;
+			printBufferAllocationFailed("visual_pitch_roll");
+			return;
+		}
+	}
+
+	const int64_t time_us = pitch_roll.time_us
+				- static_cast<int64_t>(_params.visual_pitch_roll_delay_ms * 1000)
+				- static_cast<int64_t>(_dt_ekf_avg * 5e5f); // seconds to microseconds divided by 2
+
+	// limit data rate to prevent data being lost
+	if (time_us >= static_cast<int64_t>(_visual_pitch_roll_buffer->get_newest().time_us + _min_obs_interval_us)) {
+
+		visualPitchRoll visualPitchRoll_new{pitch_roll};
+		visualPitchRoll_new.time_us = time_us;
+
+		_visual_pitch_roll_buffer->push(visualPitchRoll_new);
+
+	} else {
+		ECL_WARN("visual pitch roll data too fast %" PRIi64 " < %" PRIu64 " + %d", time_us, _flow_buffer->get_newest().time_us, _min_obs_interval_us);
+	}
+}
 
 #if defined(CONFIG_EKF2_EXTERNAL_VISION)
 void EstimatorInterface::setExtVisionData(const extVisionSample &evdata)

@@ -145,6 +145,8 @@ void Ekf::controlFusionModes(const imuSample &imu_delayed)
 	controlAuxVelFusion();
 #endif // CONFIG_EKF2_AUXVEL
 
+	controlVisualPitchRollFusion(imu_delayed);
+
 	controlZeroInnovationHeadingUpdate();
 
 	_zero_velocity_update.update(*this, imu_delayed);
