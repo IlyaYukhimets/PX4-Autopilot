@@ -125,7 +125,8 @@ FixedwingRateControl::vehicle_manual_poll()
 
 				_rate_sp_pub.publish(_rates_sp);
 
-			} else {
+			} else if (!_vehicle_status.is_vtol_tailsitter)
+			{
 				// Manual/direct control, filled in FW-frame. Note that setpoints will get transformed to body frame prior publishing.
 
 				_vehicle_torque_setpoint.xyz[0] = math::constrain(_manual_control_setpoint.roll * _param_fw_man_r_sc.get() +

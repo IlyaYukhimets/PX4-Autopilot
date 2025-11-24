@@ -1,0 +1,104 @@
+#!/bin/sh
+#
+# @name Mishutka VTOL
+#
+# @type VTOL tailsitter only rotor control
+#
+# @maintainer Andrey Gostev
+#
+
+. ${R}etc/init.d/rc.vtol_defaults
+
+set MIXER quad_w
+
+param set-default MAV_TYPE 20
+
+param set-default CA_AIRFRAME 4
+
+param set-default SYS_HAS_NUM_ASPD 0
+
+param set-default SENS_BOARD_ROT 24
+
+param set-default CA_ROTOR_COUNT 4
+param set-default CA_ROTOR0_PZ -0.0664
+param set-default CA_ROTOR0_PY 0.156
+param set-default CA_ROTOR0_PX 0.109
+param set-default CA_ROTOR0_AX 0.0
+param set-default CA_ROTOR0_AZ -1.0
+param set-default CA_ROTOR0_KM 0.05
+param set-default CA_ROTOR1_PZ -0.0664
+param set-default CA_ROTOR1_PY -0.156
+param set-default CA_ROTOR1_PX -0.109
+param set-default CA_ROTOR1_AX 0.0
+param set-default CA_ROTOR1_AZ -1.0
+param set-default CA_ROTOR1_KM 0.05
+param set-default CA_ROTOR2_PZ -0.0664
+param set-default CA_ROTOR2_PY 0.156
+param set-default CA_ROTOR2_PX -0.109
+param set-default CA_ROTOR2_AX 0.0
+param set-default CA_ROTOR2_AZ -1.0
+param set-default CA_ROTOR2_KM -0.05
+param set-default CA_ROTOR3_PZ -0.0664
+param set-default CA_ROTOR3_PY -0.156
+param set-default CA_ROTOR3_PX 0.109
+param set-default CA_ROTOR3_AX 0.0
+param set-default CA_ROTOR3_AZ -1.0
+param set-default CA_ROTOR3_KM -0.05
+
+param set-default CA_SV_CS_COUNT 0
+
+param set-default PWM_MAIN_FUNC1 101
+param set-default PWM_MAIN_FUNC2 102
+param set-default PWM_MAIN_FUNC3 103
+param set-default PWM_MAIN_FUNC4 104
+param set-default PWM_MAIN_FUNC5 0
+
+param set-default COM_DISARM_LAND -1.0
+param set-default COM_DISARM_PRFLT -1.0
+
+param set-default MPC_XY_P 0.2
+param set-default MPC_XY_VEL_P_ACC 1.2
+param set-default MPC_XY_VEL_I_ACC 0.2
+param set-default MPC_XY_VEL_D_ACC 0.1
+param set-default MPC_Z_VEL_MAX_UP 12.5
+param set-default MPC_Z_V_AUTO_UP 10.0
+param set-default MC_PITCHRATE_D 0.0048
+param set-default MC_PITCHRATE_I 0.3
+param set-default MC_PITCHRATE_K 1.1
+param set-default MC_ROLLRATE_D 0.0004
+param set-default MC_ROLLRATE_I 0.1
+param set-default MC_ROLLRATE_MAX 120
+param set-default MC_PITCH_P 2.0
+param set-default MC_ROLL_P 2.0
+param set-default MC_YAWRATE_I 0.2
+param set-default MC_YAWRATE_K 1.2
+param set-default MC_YAWRATE_MAX 120
+param set-default MC_YAW_P 2.0
+
+param set-default FW_AIRSPD_MAX 55.5
+param set-default FW_AIRSPD_MIN 27.8
+param set-default FW_AIRSPD_STALL 25
+param set-default FW_AIRSPD_MIN 36.1
+param set-default FW_PSP_OFF 8.0
+param set-default FW_THR_ASPD_MAX 0.8
+param set-default FW_THR_ASPD_MIN 0.3
+param set-default FW_THR_TRIM 0.4
+param set-default FW_T_CLMB_MAX 20.0
+param set-default FW_T_CLMB_R_SP 10.0
+param set-default FW_T_SINK_MIN 5.0
+param set-default FW_USE_AIRSPD 0
+param set-default FW_YR_I 0.1
+
+param set-default VT_ARSP_BLEND 25
+param set-default VT_ARSP_TRANS 30
+param set-default VT_B_TRANS_DUR 20.0
+param set-default VT_FW_DIFTHR_EN 7
+param set-default VT_FW_DIFTHR_S_Y 1.0
+param set-default VT_F_TRANS_DUR 20.0
+param set-default VT_F_TRANS_THR 0.5
+param set-default VT_F_TR_OL_TM 20.0
+param set-default VT_QC_ALT_LOSS 20.0
+param set-default VT_QC_T_ALT_LOSS 20.0
+param set-default VT_TRANS_TIMEOUT 30.0
+
+
