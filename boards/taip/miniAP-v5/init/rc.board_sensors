@@ -27,4 +27,4 @@ ina226 start -X -b 3 -a 64
 
 # Baro on internal I2C
 ms5611 -I -b 4 start
-dps310 -I -b 4 start
+dps310 -I -b 4 -a 118 start
