@@ -2,7 +2,8 @@
 #
 # @name Mishutka VTOL
 #
-# @type VTOL tailsitter only rotor control
+# @type VTOL Tailsitter
+# @class VTOL
 #
 # @maintainer Andrey Gostev
 #
@@ -24,33 +25,37 @@ param set-default CA_ROTOR0_PZ -0.0664
 param set-default CA_ROTOR0_PY 0.156
 param set-default CA_ROTOR0_PX 0.109
 param set-default CA_ROTOR0_AX 0.0
+param set-default CA_ROTOR0_AY 0.0
 param set-default CA_ROTOR0_AZ -1.0
 param set-default CA_ROTOR0_KM 0.05
 param set-default CA_ROTOR1_PZ -0.0664
 param set-default CA_ROTOR1_PY -0.156
 param set-default CA_ROTOR1_PX -0.109
 param set-default CA_ROTOR1_AX 0.0
+param set-default CA_ROTOR1_AY 0.0
 param set-default CA_ROTOR1_AZ -1.0
 param set-default CA_ROTOR1_KM 0.05
 param set-default CA_ROTOR2_PZ -0.0664
-param set-default CA_ROTOR2_PY 0.156
-param set-default CA_ROTOR2_PX -0.109
+param set-default CA_ROTOR2_PY -0.156
+param set-default CA_ROTOR2_PX 0.109
 param set-default CA_ROTOR2_AX 0.0
+param set-default CA_ROTOR2_AY 0.0
 param set-default CA_ROTOR2_AZ -1.0
 param set-default CA_ROTOR2_KM -0.05
 param set-default CA_ROTOR3_PZ -0.0664
 param set-default CA_ROTOR3_PY -0.156
-param set-default CA_ROTOR3_PX 0.109
+param set-default CA_ROTOR3_PX -0.109
 param set-default CA_ROTOR3_AX 0.0
+param set-default CA_ROTOR3_AY 0.0
 param set-default CA_ROTOR3_AZ -1.0
 param set-default CA_ROTOR3_KM -0.05
 
 param set-default CA_SV_CS_COUNT 0
 
-param set-default PWM_MAIN_FUNC1 101
-param set-default PWM_MAIN_FUNC2 102
-param set-default PWM_MAIN_FUNC3 103
-param set-default PWM_MAIN_FUNC4 104
+param set-default PWM_MAIN_FUNC1 103
+param set-default PWM_MAIN_FUNC2 104
+param set-default PWM_MAIN_FUNC3 101
+param set-default PWM_MAIN_FUNC4 102
 param set-default PWM_MAIN_FUNC5 0
 
 param set-default COM_DISARM_LAND -1.0
