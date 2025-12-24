@@ -154,6 +154,10 @@ OSDatxxxx::init_osd()
 	if (_param_osd_atxxxx_cfg.get() == 2) {
 		data |= OSD_PAL_TX_MODE;
 	}
+	else
+	{
+		data |= OSD_NTSC_TX_MODE;
+	}
 	//data |= 0x04;
 
 
@@ -508,7 +512,7 @@ OSDatxxxx::add_airspeed(uint8_t pos_x, uint8_t pos_y)
 
 	memset(buf, 0, sizeof(buf));
 
-	snprintf(buf, sizeof(buf), "SPEED:%1.1fm/s", (double)_airspeed);
+	snprintf(buf, sizeof(buf), "%1.1fm/s", (double)_airspeed);
 
  	null_position = ascii_to_at7456_symbol_convert(buf);
 
@@ -730,13 +734,13 @@ OSDatxxxx::update_topics()
 		vehicle_global_position_s global_position{};
 		mount_orientation_s mount_orientation{};
 		sensor_gps_s gps_position{};
-		//airspeed_s airspeed{};
+		airspeed_s airspeed{};
 
 		_local_position_sub.copy(&local_position);
 		_vehicle_global_position_sub.copy(&global_position);
 		_sensor_gps_sub.copy(&gps_position);
 		_mount_orientation_sub.copy(&mount_orientation);
-		//_airspeed_sub.copy(&airspeed);
+		_airspeed_sub.copy(&airspeed);
 
 		_local_position_valid = local_position.z_valid;
 
@@ -934,12 +938,7 @@ OSDatxxxx::update_screen()
 
 	ret |= add_voltage_info(_param_osd_voltage_x.get(), _param_osd_voltage_y.get());
 	ret |= add_charge_info(_param_osd_charge_x.get(), _param_osd_charge_y.get());
-
-
-	//ret |= add_airspeed(15, BOTTLE_AIRSPEED_INFO_ROW);
-
-	//ret |= add_gps(15, BOTTLE_GPS_INFO_ROW);
-
+	ret |= add_airspeed(_param_osd_speed_g_x.get(), _param_osd_speed_g_y.get());
 	ret |= add_altitude(_param_osd_alt_x.get(), _param_osd_alt_y.get());
 	ret |= add_heading(_param_osd_heading_x.get(), _param_osd_heading_y.get());
 

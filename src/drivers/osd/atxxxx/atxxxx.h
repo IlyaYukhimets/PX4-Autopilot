@@ -71,8 +71,9 @@
 #define OSD_CHARS_PER_ROW	30
 #define OSD_NUM_ROWS_PAL	16
 #define OSD_NUM_ROWS_NTSC	13
-#define OSD_ZERO_BYTE 0x00
-#define OSD_PAL_TX_MODE 0x40
+#define OSD_ZERO_BYTE 		0x00
+#define OSD_PAL_TX_MODE 	0x40
+#define OSD_NTSC_TX_MODE	0x00
 
 
 
@@ -193,6 +194,8 @@ private:
 		(ParamInt<px4::params::OSD_ANT_Y>) _param_osd_ant_y,
 		(ParamInt<px4::params::OSD_ANT_X>) _param_osd_ant_x,
 		(ParamInt<px4::params::OSD_ANT_CH>) _param_osd_ant_ch,
-		(ParamInt<px4::params::OSD_TEST_ALT>) _param_osd_test_alt
+		(ParamInt<px4::params::OSD_TEST_ALT>) _param_osd_test_alt,
+		(ParamInt<px4::params::OSD_SPEED_G_X>) _param_osd_speed_g_x,
+		(ParamInt<px4::params::OSD_SPEED_G_Y>) _param_osd_speed_g_y
 	)
 };

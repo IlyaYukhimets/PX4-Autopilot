@@ -227,7 +227,7 @@ PARAM_DEFINE_INT32(OSD_FTIME_X, 0);
 * @group OSD
 *
 */
-PARAM_DEFINE_INT32(OSD_ANT_Y, 10);
+PARAM_DEFINE_INT32(OSD_ANT_Y, 3);
 
 /**
 * Set the X-point of used antenna
@@ -241,7 +241,7 @@ PARAM_DEFINE_INT32(OSD_ANT_Y, 10);
 * @group OSD
 *
 */
-PARAM_DEFINE_INT32(OSD_ANT_X, 10);
+PARAM_DEFINE_INT32(OSD_ANT_X, 0);
 
 /**
 * OSD module used antenna channel param
@@ -254,7 +254,33 @@ PARAM_DEFINE_INT32(OSD_ANT_X, 10);
 * @group OSD
 *
 */
-PARAM_DEFINE_INT32(OSD_ANT_CH, 10);
+PARAM_DEFINE_INT32(OSD_ANT_CH, 16);
+
+/**
+* OSD module used antenna channel param ground speed
+*
+* If test value is not null than this value will be set on the OSD
+*
+* @min 0
+* @max 16
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_SPEED_G_X, 0);
+
+/**
+* OSD module used antenna channel param ground speed
+*
+* If test value is not null than this value will be set on the OSD
+*
+* @min 0
+* @max 16
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_SPEED_G_Y, 0);
 
 /**
 * Set the test value for altitude
