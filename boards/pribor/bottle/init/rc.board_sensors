@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# PX4 FMUv5 specific board sensors init
+#------------------------------------------------------------------------------
+
+board_adc start
+
+# Internal SPI bus ICM-42688-P
+icm42688p -s -R 0 -q start
+
+# Baro on internal SPI
+icp201xx -I start
+
+# internal compass
+ist8308 -X -b 1 -a 12 -R 8 start
+
+# External compass on GPS1/I2C1 (the 1rd external bus): standard Holybro Pixhawk 4 or CUAV V5 GPS/compass puck (with lights, safety button, and buzzer)
+ist8310 -X -R 10 start
+
+# External compass on GPS1/I2C1 (the 1rd external bus): PRIBOR GNSS&MAG board
+ist8308 -X -b 1 -a 13 -R 8 start
+
+# external power monitor (INA226)
+ina226 start -X -b 3 -a 64

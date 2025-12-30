@@ -239,7 +239,7 @@
 #endif
 
 #if S_RGB_LED_CHANNEL == 1
-# define SLED_CCER      (CCER_CCnxE << 0) |
+# define SLED_CCER      (CCER_CCnxE << 0)
 # define SLED_CCMR1     GTIM_CCMR1_OC1PE | (GTIM_CCMR_MODE_PWM1 << GTIM_CCMR1_OC1M_SHIFT)
 # define SLED_CCMR2     0
 # define SLED_rCCR      rCCR1
@@ -315,20 +315,21 @@
 
 // The DMA control word
 
-#define SLED_DMA_SCR (DMA_SCR_PRIHI | DMA_SCR_MSIZE_16BITS | DMA_SCR_PSIZE_16BITS | DMA_SCR_MINC | \
+#define SLED_DMA_SCR (DMA_SCR_PRILO | DMA_SCR_MSIZE_16BITS | DMA_SCR_PSIZE_16BITS | DMA_SCR_MINC | \
 		      DMA_SCR_DIR_M2P | DMA_SCR_TCIE | DMA_SCR_TEIE | DMA_SCR_DMEIE)
 
 #define DIVISOR          1000000000ll // working in nS
 // Timing from data sheet Total bit time is 1200 nS
 // one is ----____, (600/600) a zero is ---_____ (300/900)
 
-#define T0H              ((300ll  * S_RGB_LED_CLOCK) / DIVISOR)
-#define T1H              ((600ll  * S_RGB_LED_CLOCK) / DIVISOR)
+#define T0H              ((350ll  * S_RGB_LED_CLOCK) / DIVISOR)
+#define T1H              ((700ll  * S_RGB_LED_CLOCK) / DIVISOR)
 #define TW               ((1200ll * S_RGB_LED_CLOCK) / DIVISOR)
 
 #define COLOR_PER_LED   3  // There is a R G B in each package.
 #define BITS_PER_COLOR  8  // Each LED has 8 bits of luminosity
 #define BITS_PER_PACKAGE (BITS_PER_COLOR * COLOR_PER_LED)
+#define BITS_PER_LINE (BITS_PER_PACKAGE * BOARD_HAS_N_S_RGB_LED)
 
 
 // The DMA handle used by the driver.
@@ -349,11 +350,12 @@ void dma_callback(DMA_HANDLE handle, uint8_t status, void *arg)
  *  [hi][lo]:{8 * 3 * 8} [ffff] Last DMA will set the output low
  *  Output =  ctr < ccr ? 1 : 0;
 */
-uint16_t bits[(BITS_PER_COLOR * COLOR_PER_LED * BOARD_HAS_N_S_RGB_LED) + 1] __attribute__((aligned(sizeof(uint16_t))));
+uint16_t bits[(BITS_PER_LINE) + 1] __attribute__((aligned(sizeof(uint16_t))));
 
 extern int neopixel_write(neopixel::NeoLEDData *led_data, int number_of_packages)
 {
 	uint32_t mask;
+	uint32_t i = 0, leds = 0;
 
 	// DMA in progress let it finish
 
@@ -363,8 +365,10 @@ extern int neopixel_write(neopixel::NeoLEDData *led_data, int number_of_packages
 
 	// For the bits times to DMA
 
-	for (uint32_t i = 0, leds = 0; i < arraySize(bits) - 1; i++) {
-		mask = 1 << ((BITS_PER_PACKAGE - 1) - (i % BITS_PER_PACKAGE));
+	for (i = 0, leds = 0; i < BITS_PER_LINE; i++)
+	{
+		mask = 1 << (BITS_PER_PACKAGE - 1 - i);
+
 		bits[i] = led_data[leds].data.l & mask ? T1H : T0H;
 
 		if (mask & 1) {
@@ -372,24 +376,42 @@ extern int neopixel_write(neopixel::NeoLEDData *led_data, int number_of_packages
 		}
 	}
 
-	// Set up the DMA Operations
+	bits[leds * i + 1] = 0;
+	leds = 0;
+	i = 0;
 
-	stm32_dmasetup(dma_handle,
+	// Set up the DMA Operations
+#if defined(CONFIG_STM32H7_DMA1) || defined(CONFIG_STM32H7_DMA2)
+	struct stm32_dma_config_s cfg;
+	cfg.paddr = STM32_TIM17_DMAR;
+	cfg.maddr = (uint32_t) &bits[1];
+	cfg.cfg1 = SLED_DMA_SCR;
+	cfg.cfg2 = 0;
+	cfg.ndata = BITS_PER_LINE; //We have buffer of 25 color data (bits), first word we preload before start DMA. Bits[25] has a null value for dummy send by DMA.
+
+	stm32_dmasetup(dma_handle, &cfg);
+#else
+		stm32_dmasetup(dma_handle,
 		       _TIM_REG(STM32_GTIM_DMAR_OFFSET),
 		       (uint32_t) bits,
 		       arraySize(bits),
 		       SLED_DMA_SCR);
+#endif
 
 	// atomic operations
 	irqstate_t flags = px4_enter_critical_section();
 
 	// Prep the timer for update, start with the first bit.
 	SLED_rCCR = bits[0];
-	rEGR |= GTIM_EGR_UG;
+	//rEGR |= GTIM_EGR_UG;
 	rCR1 |= GTIM_CR1_CEN;  // Start the Timer
+	rDIER &= ~GTIM_DIER_UDE;
 
 	// And away we go
 	stm32_dmastart(dma_handle, dma_callback, NULL, false);
+
+	rDIER |= GTIM_DIER_UDE;
+
 	px4_leave_critical_section(flags);
 
 	return 0;

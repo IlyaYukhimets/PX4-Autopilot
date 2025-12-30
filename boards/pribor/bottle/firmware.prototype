@@ -1,0 +1,13 @@
+{
+    "board_id": 214,
+    "magic": "PRIBOR_BOTTLE",
+    "description": "Firmware for the PRIBORBOTTLE board",
+    "image": "",
+    "build_time": 0,
+    "summary": "PRIBORBOTTLE",
+    "version": "0.1",
+    "image_size": 0,
+    "image_maxsize": 2064384,
+    "git_identity": "",
+    "board_revision": 0
+}

@@ -151,6 +151,7 @@ void Ekf::controlFusionModes(const imuSample &imu_delayed)
 	controlTerrainFakeFusion();
 	updateTerrainValidity();
 #endif // CONFIG_EKF2_TERRAIN
+	controlVisualPitchRollFusion(imu_delayed);
 
 	controlZeroInnovationHeadingUpdate();
 

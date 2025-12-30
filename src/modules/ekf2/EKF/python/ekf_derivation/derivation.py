@@ -354,6 +354,64 @@ def compute_sideslip_innov_and_innov_var(
 
     return (innov, innov_var)
 
+def predict_pitch_roll(
+        state: VState,
+        epsilon: sf.Scalar
+) -> sf.V2:
+    state = vstate_to_state(state)
+    q_px4 = state["quat_nominal"].to_storage()
+    qw = q_px4[3]
+    qx = q_px4[0]
+    qy = q_px4[1]
+    qz = q_px4[2]
+    sinRcosP = 2.0 * (qw * qx + qy * qz)
+    cosRcosP = 1.0 - 2.0 * (qx * qx + qy * qy)
+    roll = sf.atan2(sinRcosP, cosRcosP, epsilon=epsilon)
+    sinP = 2.0 * (qw * qy - qz * qx)
+    pitch = sf.asin_safe(sinP, epsilon=epsilon);
+    return sf.V2(pitch, roll)
+
+def compute_pitch_roll_innov_innov_var_and_Hp(
+        state: VState,
+        P: MTangent,
+        pitch_roll: sf.V2,
+        R: sf.Scalar,
+        epsilon: sf.Scalar
+) -> (sf.V2, sf.V2, VState):
+
+    pitch_roll_pred = predict_pitch_roll(state, epsilon)
+    innov = pitch_roll_pred - pitch_roll
+
+    state = vstate_to_state(state)
+
+    innov_var = sf.V2()
+    Hp = jacobian_chain_rule(pitch_roll_pred[0], state)
+    innov_var[0] = (Hp * P * Hp.T + R)[0,0]
+
+    Hr = jacobian_chain_rule(pitch_roll_pred[1], state)
+    innov_var[1] = (Hr * P * Hr.T + R)[0,0]
+
+    return (innov, innov_var, Hp.T)
+
+def compute_roll_innov_innov_var_and_h(
+        state: VState,
+        P: MTangent,
+        roll: sf.Scalar,
+        R: sf.Scalar,
+        epsilon: sf.Scalar
+) -> (sf.Scalar, sf.Scalar, VState):
+
+    pitch_roll_pred = predict_pitch_roll(state, epsilon)
+
+    innov = pitch_roll_pred[1] - roll
+
+    state = vstate_to_state(state)
+
+    H = jacobian_chain_rule(pitch_roll_pred[1], state)
+    innov_var = (H * P * H.T + R)[0,0]
+
+    return (innov, innov_var, H.T)
+
 def compute_sideslip_h(
         state: VState,
         epsilon: sf.Scalar
@@ -740,6 +798,8 @@ if not args.disable_wind:
     generate_px4_function(compute_wind_init_and_cov_from_airspeed, output_names=["wind", "P_wind"])
     generate_px4_function(compute_wind_init_and_cov_from_wind_speed_and_direction, output_names=["wind", "P_wind"])
 
+generate_px4_function(compute_pitch_roll_innov_innov_var_and_Hp, output_names=["innov", "innov_var", "Hp"])
+generate_px4_function(compute_roll_innov_innov_var_and_h, output_names=["innov", "innov_var", "H"])
 generate_px4_function(compute_yaw_innov_var_and_h, output_names=["innov_var", "H"])
 generate_px4_function(compute_flow_xy_innov_var_and_hx, output_names=["innov_var", "H"])
 generate_px4_function(compute_flow_y_innov_var_and_h, output_names=["innov_var", "H"])

@@ -223,6 +223,11 @@ if(CONFIG_EKF2_SIDESLIP)
 	list(APPEND EKF_MODULE_PARAMS params_sideslip.yaml)
 endif()
 
+	list(APPEND EKF_SRCS
+		EKF/visual_pitch_roll_control.cpp
+		EKF/visual_pitch_roll_fusion.cpp
+	)
+
 if(CONFIG_EKF2_TERRAIN)
 	list(APPEND EKF_SRCS EKF/terrain_control.cpp)
 	list(APPEND EKF_MODULE_PARAMS params_terrain.yaml)

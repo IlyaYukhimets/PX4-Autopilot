@@ -86,6 +86,7 @@
 #include <uORB/topics/vehicle_local_position.h>
 #include <uORB/topics/vehicle_odometry.h>
 #include <uORB/topics/vehicle_status.h>
+#include <uORB/topics/visual_pitch_roll.h>
 #include <uORB/topics/yaw_estimator_status.h>
 
 #if defined(CONFIG_EKF2_AIRSPEED)
@@ -232,6 +233,8 @@ private:
 
 	void UpdateSystemFlagsSample(ekf2_timestamps_s &ekf2_timestamps);
 
+	void UpdateVisualPitchRoll(ekf2_timestamps_s &ekf2_timestamps);
+
 	// Used to check, save and use learned accel/gyro/mag biases
 	struct InFlightCalibration {
 		hrt_abstime last_us{0};         ///< last time the EKF was operating a mode that estimates accelerometer biases (uSec)
@@ -346,6 +349,9 @@ private:
 	hrt_abstime _status_optical_flow_pub_last{0};
 	hrt_abstime _optical_flow_vel_pub_last{0};
 #endif // CONFIG_EKF2_OPTICAL_FLOW
+	hrt_abstime _status_visual_pitch_roll_pub_last{0};
+	uORB::PublicationMulti<estimator_aid_source2d_s> _estimator_aid_src_visual_pitch_roll_pub{ORB_ID(estimator_aid_src_visual_pitch_roll)};
+
 
 #if defined(CONFIG_EKF2_BAROMETER)
 	uint8_t _baro_calibration_count {0};
@@ -392,6 +398,8 @@ private:
 
 	uORB::Subscription _vehicle_command_sub{ORB_ID(vehicle_command)};
 	uORB::Publication<vehicle_command_ack_s> _vehicle_command_ack_pub{ORB_ID(vehicle_command_ack)};
+
+	uORB::Subscription _visual_pitch_roll_sub{ORB_ID(visual_pitch_roll)};
 
 	uORB::SubscriptionCallbackWorkItem _sensor_combined_sub{this, ORB_ID(sensor_combined)};
 	uORB::SubscriptionCallbackWorkItem _vehicle_imu_sub{this, ORB_ID(vehicle_imu)};
@@ -653,6 +661,25 @@ private:
 		(ParamExtFloat<px4::params::EKF2_EV_POS_Z>)
 		_param_ekf2_ev_pos_z, ///< Z position of VI sensor focal point in body frame (m)
 #endif // CONFIG_EKF2_EXTERNAL_VISION
+
+		// visual pitch roll
+		(ParamExtFloat<px4::params::EKF2_VPR_DELAY>)
+		_param_ekf2_visual_pitch_roll_delay,	///< Visual pitch and roll measurement delay relative to IMU measurements (mSec)
+
+		(ParamExtInt<px4::params::EKF2_VPR_CTRL>)
+		_param_ekf2_visual_pitch_roll_ctrl,	///< Visual pitch and roll control selection
+
+		(ParamExtFloat<px4::params::EKF2_VPR_CMIN>)
+		_param_ekf2_visual_pitch_roll_min_confidence,	///< Visual pitch and roll min confidence
+
+
+		(ParamExtFloat<px4::params::EKF2_VPR_MIN_N>)
+		_param_ekf2_visual_pitch_roll_min_noise,	///< Visual pitch and roll min noise
+		(ParamExtFloat<px4::params::EKF2_VPR_MAX_N>)
+		_param_ekf2_visual_pitch_roll_mam_noise,	///< Visual pitch and roll max noise
+		(ParamExtFloat<px4::params::EKF2_VPR_INN_G>)
+		_param_ekf2_visual_pitch_roll_innov_gate,	///< Visual pitch and roll noise gate
+
 #if defined(CONFIG_EKF2_OPTICAL_FLOW)
 		// optical flow fusion
 		(ParamExtInt<px4::params::EKF2_OF_CTRL>)

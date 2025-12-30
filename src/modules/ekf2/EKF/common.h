@@ -224,6 +224,13 @@ struct flowSample {
 	uint8_t     quality{};   ///< quality indicator between 0 and 255
 };
 
+struct visualPitchRoll {
+	uint64_t    time_us{};          ///< timestamp of the measurement (uSec)
+	float       pitch{};
+	float       roll{};
+	float       confidence{};
+};
+
 #if defined(CONFIG_EKF2_EXTERNAL_VISION)
 struct extVisionSample {
 	uint64_t    time_us{};     ///< timestamp of the measurement (uSec)
@@ -463,6 +470,13 @@ struct parameters {
 
 	Vector3f flow_pos_body{};               ///< xyz position of range sensor focal point in body frame (m)
 #endif // CONFIG_EKF2_OPTICAL_FLOW
+
+	float visual_pitch_roll_delay_ms{20.f};
+	int32_t visual_pitch_roll_control{false};
+	float visual_pitch_roll_min_confidence{0.6f};
+	float visual_pitch_roll_noise_min{1.2f};
+	float visual_pitch_roll_noise_max{12.0f};
+	float visual_pitch_roll_innov_gate{10.f};
 
 	// XYZ offset of sensors in body axes (m)
 	Vector3f imu_pos_body{};                ///< xyz position of IMU in body frame (m)

@@ -1,0 +1,135 @@
+/****************************************************************************
+ *
+ *   Copyright (c) 2021 PX4 Development Team. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ * 3. Neither the name PX4 nor the names of its contributors may be
+ *    used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ ****************************************************************************/
+
+/**
+ * @file board_config.h
+ *
+ * board internal definitions
+ */
+
+#pragma once
+
+#include <px4_platform_common/px4_config.h>
+#include <nuttx/compiler.h>
+#include <stdint.h>
+
+
+/* PWM */
+#define DIRECT_PWM_OUTPUT_CHANNELS   4
+
+#define GPIO_PWM_CH1    /* PA0 */   (GPIO_INPUT | GPIO_PULLDOWN | GPIO_PORTA | GPIO_PIN0)
+#define GPIO_PWM_CH2    /* PB7 */   (GPIO_INPUT | GPIO_PULLDOWN | GPIO_PORTB | GPIO_PIN7)
+#define GPIO_PWM_CH3    /* PA2 */   (GPIO_INPUT | GPIO_PULLDOWN | GPIO_PORTA | GPIO_PIN2)
+#define GPIO_PWM_CH4    /* PA3 */   (GPIO_INPUT | GPIO_PULLDOWN | GPIO_PORTA | GPIO_PIN3)
+
+#define GPIO_nLED_RED   /* PA0  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTA | GPIO_PIN0)
+#define GPIO_nLED_GREEN /* PA2  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTA | GPIO_PIN2)
+#define GPIO_nLED_BLUE  /* PA3  */  (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_2MHz | GPIO_OUTPUT_CLEAR | GPIO_PORTA | GPIO_PIN3)
+
+#define GPIO_SENS_VD_5V_EN   /* PC0  */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN0)
+#define GPIO_SENS_VA_5V_EN   /* PC15 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN15)
+#define SENS_VD_5V_EN(on_true)   px4_arch_gpiowrite(GPIO_SENS_VD_5V_EN, (on_true))
+#define SENS_VA_5V_EN(on_true)   px4_arch_gpiowrite(GPIO_SENS_VA_5V_EN, (on_true))
+
+/* CAN  Silent mode control */
+#define GPIO_CAN2_SILENT_S0   /* PA12 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN12)
+
+/* CAN termination software control */
+#define GPIO_CAN2_TERMINATION /* PD2 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTD|GPIO_PIN2)
+#define GPIO_CAN_TERM                    GPIO_CAN2_TERMINATION
+
+/* ICM42688p FSYNC */
+#define GPIO_42688P_FSYNC     /* PB8  */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN8)
+
+/* Boot config */
+#define GPIO_BOOT_CONFIG      /* PC15 */ (GPIO_INPUT|GPIO_PULLUP|GPIO_PORTC|GPIO_PIN15|GPIO_EXTI)
+
+/* LEDs are driven with open drain to support Anode to 5V or 3.3V */
+#define GPIO_TIM5_CH1         /* PA8  */ (GPIO_TIM5_CH1_1|GPIO_OPENDRAIN|GPIO_SPEED_2MHz)
+#define GPIO_TIM5_CH3         /* PA9  */ (GPIO_TIM5_CH3_1|GPIO_OPENDRAIN|GPIO_SPEED_2MHz)
+#define GPIO_TIM5_CH4         /* PA10 */ (GPIO_TIM5_CH4_1|GPIO_OPENDRAIN|GPIO_SPEED_2MHz)
+
+/* I2C */
+#define GPIO_I2C1_SCL_RESET   /* PB8  */  (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN8)
+#define GPIO_I2C1_SDA_RESET   /* PB9  */  (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN9)
+
+#define GPIO_I2C2_SCL_RESET   /* PB10 */  (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN10)
+#define GPIO_I2C2_SDA_RESET   /* PB3  */  (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN3)
+
+#define GPIO_I2C3_SCL_RESET   /* PA8  */  (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN8)
+#define GPIO_I2C3_SDA_RESET   /* PC9  */  (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN9)
+
+/* USART */
+#define GPIO_USART1_RX_GPIO	(GPIO_INPUT|GPIO_PULLUP|GPIO_SPEED_50MHz|GPIO_PORTA|GPIO_PIN10)
+#define GPIO_USART1_TX_GPIO	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_PULLUP|GPIO_SPEED_50MHz|GPIO_PORTA|GPIO_PIN9)
+
+#define FLASH_BASED_PARAMS
+
+/* High-resolution timer */
+#define HRT_TIMER                    3  /* use timer 3 for the HRT */
+#define HRT_TIMER_CHANNEL            4  /* use capture/compare channel 4 */
+
+#define PX4_GPIO_INIT_LIST { \
+        GPIO_I2C1_SCL_RESET,              \
+        GPIO_I2C1_SDA_RESET,              \
+        GPIO_I2C2_SCL_RESET,              \
+        GPIO_I2C2_SDA_RESET,              \
+        GPIO_I2C3_SCL_RESET,              \
+        GPIO_I2C3_SDA_RESET,              \
+        GPIO_42688P_FSYNC,                \
+        GPIO_BOOT_CONFIG,                 \
+        GPIO_CAN2_TX,                     \
+        GPIO_CAN2_RX,                     \
+        GPIO_CAN2_SILENT_S0,              \
+        GPIO_CAN2_TERMINATION,            \
+        GPIO_SENS_VD_5V_EN,               \
+        GPIO_SENS_VA_5V_EN,               \
+    }
+
+#define PX4_I2C_BUS_MTD      	    3
+#define BOARD_SPI_BUS_MAX_BUS_ITEMS 4
+
+__BEGIN_DECLS
+
+#define BOARD_HAS_N_S_RGB_LED       1
+#define BOARD_MAX_LEDS              BOARD_HAS_N_S_RGB_LED
+
+#ifndef __ASSEMBLY__
+
+extern void stm32_spiinitialize(void);
+
+#include <px4_platform_common/board_common.h>
+
+#endif /* __ASSEMBLY__ */
+
+__END_DECLS

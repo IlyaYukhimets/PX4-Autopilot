@@ -45,4 +45,252 @@
 * @group OSD
 *
 */
-PARAM_DEFINE_INT32(OSD_ATXXXX_CFG, 0);
+PARAM_DEFINE_INT32(OSD_ATXXXX_CFG, 2);
+
+/**
+* Set the X-point of Heading information
+*
+* Configure the ATXXXX OSD Chip and
+* set the X-point of information.
+*
+* @min 0
+* @max 30
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_HEADING_X, 25);
+
+/**
+* Set the Y-point of Heading information
+*
+* Configure the ATXXXX OSD Chip and
+* set the Y-point of information.
+*
+* @min 0
+* @max 15
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_HEADING_Y, 15);
+
+/**
+* Set the Y-point of Voltage information
+*
+* Configure the ATXXXX OSD Chip and
+* set the Y-point of information.
+*
+* @min 0
+* @max 15
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_VOLTAGE_Y, 14);
+
+/**
+* Set the X-point of Voltage information
+*
+* Configure the ATXXXX OSD Chip and
+* set the X-point of information.
+*
+* @min 0
+* @max 30
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_VOLTAGE_X, 0);
+
+/**
+* Set the Y-point of Charge information
+*
+* Configure the ATXXXX OSD Chip and
+* set the Y-point of information.
+*
+* @min 0
+* @max 15
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_CHARGE_Y, 15);
+
+/**
+* Set the X-point of Charge information
+*
+* Configure the ATXXXX OSD Chip and
+* set the X-point of information.
+*
+* @min 0
+* @max 30
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_CHARGE_X, 0);
+
+/**
+* Set the Y-point of Mode information
+*
+* Configure the ATXXXX OSD Chip and
+* set the Y-point of information.
+*
+* @min 0
+* @max 15
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_MODE_Y, 1);
+
+/**
+* Set the X-point of Mode information
+*
+* Configure the ATXXXX OSD Chip and
+* set the X-point of information.
+*
+* @min 0
+* @max 30
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_MODE_X, 0);
+
+/**
+* Set the Y-point of Altitude information
+*
+* Configure the ATXXXX OSD Chip and
+* set the Y-point of information.
+*
+* @min 0
+* @max 15
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_ALT_Y, 15);
+
+/**
+* Set the X-point of Altitude information
+*
+* Configure the ATXXXX OSD Chip and
+* set the X-point of information.
+*
+* @min 0
+* @max 30
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_ALT_X, 25);
+
+/**
+* Set the Y-point of Flight time information
+*
+* Configure the ATXXXX OSD Chip and
+* set the Y-point of information.
+*
+* @min 0
+* @max 15
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_FTIME_Y, 2);
+
+/**
+* Set the X-point of Flight time information
+*
+* Configure the ATXXXX OSD Chip and
+* set the X-point of information.
+*
+* @min 0
+* @max 30
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_FTIME_X, 0);
+
+/**
+* Set the Y-point of used antenna
+*
+* Configure the ATXXXX OSD Chip and
+* set the Y-point of information.
+*
+* @min 0
+* @max 15
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_ANT_Y, 3);
+
+/**
+* Set the X-point of used antenna
+*
+* Configure the ATXXXX OSD Chip and
+* set the X-point of information.
+*
+* @min 0
+* @max 30
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_ANT_X, 0);
+
+/**
+* OSD module used antenna channel param
+*
+* Param for set radio channel for monitoring used antenna
+*
+* @min 5
+* @max 16
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_ANT_CH, 16);
+
+/**
+* OSD module used antenna channel param ground speed
+*
+* If test value is not null than this value will be set on the OSD
+*
+* @min 0
+* @max 16
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_SPEED_G_X, 0);
+
+/**
+* OSD module used antenna channel param ground speed
+*
+* If test value is not null than this value will be set on the OSD
+*
+* @min 0
+* @max 16
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_SPEED_G_Y, 0);
+
+/**
+* Set the test value for altitude
+*
+* If test value is not null than this value will be set on the OSD
+*
+* @min 0
+* @max 999
+*
+* @group OSD
+*
+*/
+PARAM_DEFINE_INT32(OSD_TEST_ALT, 0);

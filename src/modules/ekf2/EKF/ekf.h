@@ -135,10 +135,12 @@ public:
 	const Vector3f &getFlowGyroBias() const { return _flow_gyro_bias; }
 	const Vector3f &getFlowRefBodyRate() const { return _ref_body_rate; }
 #endif // CONFIG_EKF2_OPTICAL_FLOW
-
 	float getHeadingInnov() const;
 	float getHeadingInnovVar() const;
 	float getHeadingInnovRatio() const;
+	float getVisualPitch() const { return _visual_pitch_roll_delayed.pitch; }
+	float getVisualRoll() const { return _visual_pitch_roll_delayed.roll; }
+	const auto &aid_src_visual_pitch_roll() const { return _aid_src_visual_pitch_roll; }
 
 #if defined(CONFIG_EKF2_DRAG_FUSION)
 	const auto &aid_src_drag() const { return _aid_src_drag; }
@@ -415,6 +417,8 @@ public:
 	bool resetGlobalPosToExternalObservation(double latitude, double longitude, float altitude, float eph, float epv,
 			uint64_t timestamp_observation);
 
+	void resetVerticalPositionTo(float new_vert_pos, float new_vert_pos_var = NAN);
+
 	void updateParameters();
 
 	friend class AuxGlobalPosition;
@@ -515,6 +519,8 @@ private:
 #if defined(CONFIG_EKF2_RANGE_FINDER)
 	estimator_aid_source1d_s _aid_src_rng_hgt {};
 #endif // CONFIG_EKF2_RANGE_FINDER
+
+	estimator_aid_source2d_s _aid_src_visual_pitch_roll{};
 
 #if defined(CONFIG_EKF2_OPTICAL_FLOW)
 	estimator_aid_source2d_s _aid_src_optical_flow {};
@@ -799,6 +805,11 @@ private:
 	bool fuseOptFlow(VectorState &H, bool update_terrain);
 
 #endif // CONFIG_EKF2_OPTICAL_FLOW
+
+	// visual pitch roll
+	void fuseVisualPitchRoll(const visualPitchRoll & pitch_roll, estimator_aid_source2d_s & aid_src);
+
+	void controlVisualPitchRollFusion(const imuSample &imu_delayed);
 
 #if defined(CONFIG_EKF2_MAGNETOMETER)
 	// Return the magnetic declination in radians to be used by the alignment and fusion processing

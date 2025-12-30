@@ -121,7 +121,8 @@ FixedwingRateControl::vehicle_manual_poll()
 
 				_rate_sp_pub.publish(_rates_sp);
 
-			} else {
+			} else if (!_vehicle_status.is_vtol_tailsitter)
+			{
 				// Manual/direct control, filled in FW-frame. Note that setpoints will get transformed to body frame prior publishing.
 				const float airspeed_scaling_sq = _airspeed_scaling * _airspeed_scaling;
 

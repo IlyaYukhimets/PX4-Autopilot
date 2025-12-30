@@ -415,6 +415,21 @@ void FixedwingAttitudeControl::Run()
 			_landing_gear_wheel.timestamp = hrt_absolute_time();
 			_landing_gear_wheel_pub.publish(_landing_gear_wheel);
 
+			if (_vehicle_status.is_vtol_tailsitter)
+			{
+				Vector3f body_rates_setpoint;
+				body_rates_setpoint(2) = -_manual_control_setpoint.roll * radians(_param_fw_r_rmax.get());
+				body_rates_setpoint(1) = (_manual_control_setpoint.pitch < 0.f) ? (_manual_control_setpoint.pitch * radians(_param_fw_p_rmax_neg.get())) : (_manual_control_setpoint.pitch * radians(_param_fw_p_rmax_pos.get()));
+				body_rates_setpoint(0) = math::constrain(_manual_control_setpoint.yaw * radians(_param_man_yr_max.get()),
+									  -radians(_param_fw_y_rmax.get()), radians(_param_fw_y_rmax.get()));
+				_rates_sp.roll = body_rates_setpoint(0);
+				_rates_sp.pitch = body_rates_setpoint(1);
+				_rates_sp.yaw = body_rates_setpoint(2);
+
+				_rates_sp.timestamp = hrt_absolute_time();
+
+				_rate_sp_pub.publish(_rates_sp);
+			}
 		}
 	}
 

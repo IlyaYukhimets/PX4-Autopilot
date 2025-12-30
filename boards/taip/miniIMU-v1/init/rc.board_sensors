@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# board sensors init
+#------------------------------------------------------------------------------
+# gps start -d /dev/ttyS0 -p ubx
+
+# Internal SPI bus ICM-42688-P
+icm42688p -s -R 0 -q start
+
+# Internal SPI bus ICM-40609-D
+icm40609d -s -R 0 -q start
+
+# Internal SPI bus BMI088 accel/gyro
+bmi088 -A -R 0 -s start
+bmi088 -G -R 0 -s start
+
+i2cdetect -b 1
+i2cdetect -b 2
+i2cdetect -b 3
+# Baro on internal I2C
+ms5611 -I -b 1 start
+dps310 -I -b 1 start

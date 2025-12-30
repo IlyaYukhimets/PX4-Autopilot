@@ -181,6 +181,12 @@ EKF2::EKF2(bool multi_mode, const px4::wq_config_t &config, bool replay_mode):
 	_param_ekf2_ev_pos_y(_params->ev_pos_body(1)),
 	_param_ekf2_ev_pos_z(_params->ev_pos_body(2)),
 #endif // CONFIG_EKF2_EXTERNAL_VISION
+	_param_ekf2_visual_pitch_roll_delay(_params->visual_pitch_roll_delay_ms),
+	_param_ekf2_visual_pitch_roll_ctrl(_params->visual_pitch_roll_control),
+	_param_ekf2_visual_pitch_roll_min_confidence(_params->visual_pitch_roll_min_confidence),
+	_param_ekf2_visual_pitch_roll_min_noise(_params->visual_pitch_roll_noise_min),
+	_param_ekf2_visual_pitch_roll_mam_noise(_params->visual_pitch_roll_noise_max),
+	_param_ekf2_visual_pitch_roll_innov_gate(_params->visual_pitch_roll_innov_gate),
 #if defined(CONFIG_EKF2_OPTICAL_FLOW)
 	_param_ekf2_of_ctrl(_params->flow_ctrl),
 	_param_ekf2_of_gyr_src(_params->flow_gyro_src),
@@ -352,6 +358,15 @@ void EKF2::AdvertiseTopics()
 #endif // CONFIG_EKF2_MAGNETOMETER
 
 #if defined(CONFIG_EKF2_OPTICAL_FLOW)
+	// visual_pitch_roll advertise
+	if (_param_ekf2_visual_pitch_roll_ctrl.get()) {
+		_estimator_aid_src_visual_pitch_roll_pub.advertise();
+	}
+
+	_attitude_pub.advertise();
+	_local_position_pub.advertise();
+	_global_position_pub.advertise();
+	_odometry_pub.advertise();
 
 		if (_param_ekf2_of_ctrl.get()) {
 			_estimator_optical_flow_vel_pub.advertise();
@@ -519,6 +534,8 @@ void EKF2::Run()
 						 _instance, latitude, longitude, static_cast<double>(altitude));
 
 					command_ack.result = vehicle_command_ack_s::VEHICLE_CMD_RESULT_ACCEPTED;
+					if (!_ekf.control_status_flags().in_air)
+						_ekf.resetVerticalPositionTo(0.f);
 
 				} else {
 					PX4_ERR("%d - Failed to set new NED origin (LLA): %3.10f, %3.10f, %4.3f\n",
@@ -780,6 +797,8 @@ void EKF2::Run()
 #endif // CONFIG_EKF2_RANGE_FINDER
 		UpdateSystemFlagsSample(ekf2_timestamps);
 
+		UpdateVisualPitchRoll(ekf2_timestamps);
+
 		// run the EKF update and output
 		const hrt_abstime ekf_update_start = hrt_absolute_time();
 
@@ -1012,6 +1031,23 @@ void EKF2::PublishAidSourceStatus(const hrt_abstime &timestamp)
 	// optical flow
 	PublishAidSourceStatus(_ekf.aid_src_optical_flow(), _status_optical_flow_pub_last, _estimator_aid_src_optical_flow_pub);
 #endif // CONFIG_EKF2_OPTICAL_FLOW
+
+#if defined(CONFIG_EKF2_TERRAIN)
+# if defined(CONFIG_EKF2_RANGE_FINDER)
+	// range finder
+	PublishAidSourceStatus(_ekf.aid_src_terrain_range_finder(), _status_terrain_range_finder_pub_last,
+			       _estimator_aid_src_terrain_range_finder_pub);
+#endif // CONFIG_EKF2_RANGE_FINDER
+
+# if defined(CONFIG_EKF2_OPTICAL_FLOW)
+	// optical flow
+	PublishAidSourceStatus(_ekf.aid_src_terrain_optical_flow(), _status_terrain_optical_flow_pub_last,
+			       _estimator_aid_src_terrain_optical_flow_pub);
+# endif // CONFIG_EKF2_OPTICAL_FLOW
+	PublishAidSourceStatus(_ekf.aid_src_visual_pitch_roll(), _status_visual_pitch_roll_pub_last, _estimator_aid_src_visual_pitch_roll_pub);
+
+
+#endif // CONFIG_EKF2_TERRAIN
 }
 
 void EKF2::PublishAttitude(const hrt_abstime &timestamp)
@@ -2628,6 +2664,23 @@ void EKF2::UpdateSystemFlagsSample(ekf2_timestamps_s &ekf2_timestamps)
 		}
 
 		_ekf.setSystemFlagData(flags);
+	}
+}
+
+void EKF2::UpdateVisualPitchRoll(ekf2_timestamps_s &ekf2_timestamps)
+{
+	// EKF visual pitch roll
+	visual_pitch_roll_s visual_pitch_roll;
+
+	if (_visual_pitch_roll_sub.update(&visual_pitch_roll)) {
+		visualPitchRoll pitch_roll {
+			.time_us = visual_pitch_roll.timestamp,
+			.pitch = visual_pitch_roll.visual_pitch,
+			.roll = visual_pitch_roll.visual_roll,
+			.confidence = visual_pitch_roll.confidence
+		};
+		_ekf.setVisualPitchRoll(pitch_roll);
+//		mavlink_log_info(&_mavlink_log_pub, "visual pitch = %.1f, roll = %.1f, confidence = %.2f \n", (double)visual_pitch_roll.visual_pitch, (double)visual_pitch_roll.visual_roll, (double)visual_pitch_roll.confidence);
 	}
 }
 
